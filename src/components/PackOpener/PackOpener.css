@@ -1,0 +1,95 @@
+.pack-opener-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.pack-hud-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  background: rgba(180, 79, 255, 0.03);
+  border: 1px solid rgba(180, 79, 255, 0.1);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+}
+
+.pack-hud-bar .hud-label { color: var(--purple); }
+.pack-hud-bar .hud-sep { opacity: 0.3; }
+
+.pack-coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 5rem 2rem;
+  border: 1px solid rgba(180, 79, 255, 0.1);
+  border-radius: var(--radius-md);
+  background: rgba(180, 79, 255, 0.02);
+  text-align: center;
+}
+
+.pack-icon {
+  font-size: 2.5rem;
+  color: var(--purple);
+  filter: drop-shadow(0 0 12px var(--purple));
+  animation: packPulse 3s ease-in-out infinite;
+}
+
+@keyframes packPulse {
+  0%, 100% { filter: drop-shadow(0 0 8px var(--purple)); opacity: 0.8; }
+  50% { filter: drop-shadow(0 0 20px var(--purple)); opacity: 1; }
+}
+
+.pack-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-hud);
+  letter-spacing: 0.14em;
+}
+
+.pack-sub {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  max-width: 400px;
+  line-height: 1.7;
+  letter-spacing: 0.05em;
+}
+
+.pack-stats-preview {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--purple);
+  text-shadow: 0 0 16px var(--purple-glow);
+  letter-spacing: 0.05em;
+}
+
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  letter-spacing: 0.14em;
+}

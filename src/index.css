@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --void: #020408;
+  --deep: #060d14;
+  --surface: #0a1520;
+  --glass: rgba(10, 21, 32, 0.6);
+  --glass-light: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --glass-border-bright: rgba(255, 255, 255, 0.15);
+
+  --cyan: #00d4ff;
+  --cyan-dim: rgba(0, 212, 255, 0.12);
+  --cyan-glow: rgba(0, 212, 255, 0.4);
+  --purple: #b44fff;
+  --purple-dim: rgba(180, 79, 255, 0.12);
+  --purple-glow: rgba(180, 79, 255, 0.3);
+  --gold: #ffb800;
+  --gold-dim: rgba(255, 184, 0, 0.1);
+  --gold-glow: rgba(255, 184, 0, 0.35);
+
+  --mana-w: #ddd8ff;
+  --mana-u: #00aaff;
+  --mana-b: #cc44ff;
+  --mana-r: #ff4422;
+  --mana-g: #00ff88;
+  --mana-c: #aabbcc;
+
+  --text-hud: #c8e8ff;
+  --text-primary: #8ab8d4;
+  --text-secondary: #4a7090;
+  --text-muted: #243040;
+  --text-gold: #ffb800;
+  --text-cyan: #00d4ff;
+
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+
+  --glow-cyan: 0 0 20px rgba(0,212,255,0.3), 0 0 60px rgba(0,212,255,0.1);
+  --glow-purple: 0 0 20px rgba(180,79,255,0.3), 0 0 60px rgba(180,79,255,0.1);
+  --glow-gold: 0 0 20px rgba(255,184,0,0.3), 0 0 60px rgba(255,184,0,0.1);
+  --shadow-deep: 0 8px 32px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  background-color: var(--void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-image:
+    radial-gradient(ellipse 120% 50% at 50% 0%, rgba(0,80,140,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 15% 100%, rgba(80,0,140,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 85% 100%, rgba(0,140,80,0.05) 0%, transparent 50%);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.07) 3px,
+    rgba(0,0,0,0.07) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+#root { min-height: 100vh; display: flex; flex-direction: column; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.4); }

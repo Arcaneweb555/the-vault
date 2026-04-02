@@ -1,0 +1,414 @@
+/* ── Page ── */
+.deck-grid-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  overflow: visible;
+}
+
+/* ── HUD Bar ── */
+.grid-hud-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  background: rgba(0, 212, 255, 0.03);
+  border: 1px solid rgba(0, 212, 255, 0.1);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+}
+
+.hud-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.hud-label { color: var(--text-cyan); font-size: 0.7rem; }
+.hud-sep   { opacity: 0.3; }
+.hud-bright { color: var(--text-cyan); }
+
+.hud-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hud-tag {
+  padding: 0.15rem 0.5rem;
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  color: var(--text-secondary);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  border-radius: 1px;
+}
+
+.hud-ping {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--mana-g);
+  font-size: 0.62rem;
+}
+
+.ping-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--mana-g);
+  box-shadow: 0 0 6px var(--mana-g);
+  animation: pingAnim 2s ease-in-out infinite;
+}
+
+@keyframes pingAnim {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ── Carousel Shell ── */
+.carousel-shell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.carousel-viewport {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* 5 columns × 2 rows = 10 decks per bank */
+.cases-bank {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+}
+
+/* ── Slide Transitions (triggered by key re-mount on .cases-bank) ── */
+.slide-left {
+  animation: slideInFromRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.slide-right {
+  animation: slideInFromLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.slide-none {
+  animation: bankFadeIn 0.4s ease both;
+}
+
+@keyframes slideInFromRight {
+  from { opacity: 0; transform: translateX(52px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInFromLeft {
+  from { opacity: 0; transform: translateX(-52px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes bankFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Navigation Arrows ── */
+.carousel-arrow {
+  flex-shrink: 0;
+  width: 42px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(0, 212, 255, 0.18);
+  color: rgba(0, 212, 255, 0.45);
+  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease,
+              background 0.2s ease, box-shadow 0.2s ease,
+              transform 0.1s ease;
+  align-self: center;
+}
+
+.carousel-arrow:hover:not(:disabled) {
+  border-color: rgba(0, 212, 255, 0.65);
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.06);
+  box-shadow:
+    0 0 18px rgba(0, 212, 255, 0.18),
+    inset 0 0 10px rgba(0, 212, 255, 0.04);
+}
+
+.carousel-arrow:active:not(:disabled) {
+  transform: scale(0.93);
+  box-shadow:
+    0 0 10px rgba(0, 212, 255, 0.28),
+    inset 0 0 8px rgba(0, 212, 255, 0.08);
+}
+
+.carousel-arrow:disabled {
+  opacity: 0.15;
+  cursor: not-allowed;
+}
+
+/* ── Bank Indicator Dots ── */
+.bank-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.bank-dot {
+  width: 20px;
+  height: 3px;
+  background: rgba(0, 212, 255, 0.16);
+  border: none;
+  border-radius: 1.5px;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.22s ease, width 0.22s ease, box-shadow 0.22s ease;
+}
+
+.bank-dot:hover:not(.active) {
+  background: rgba(0, 212, 255, 0.36);
+}
+
+.bank-dot.active {
+  width: 30px;
+  background: #00d4ff;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+}
+
+/* ── Deck Case ── */
+.deck-case {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  animation: caseReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: transform 0.3s ease;
+}
+
+@keyframes caseReveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.deck-case:hover   { transform: translateY(-6px); }
+.deck-case.selected { transform: translateY(-4px); }
+
+.case-body {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(6, 13, 20, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.deck-case:hover .case-body {
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 0 30px color-mix(in srgb, var(--backlight) 20%, transparent),
+    0 8px 40px rgba(0, 0, 0, 0.8);
+}
+
+.deck-case.selected .case-body {
+  border-color: color-mix(in srgb, var(--primary-colour) 40%, transparent);
+  box-shadow:
+    0 0 40px color-mix(in srgb, var(--backlight) 30%, transparent),
+    0 0 80px color-mix(in srgb, var(--backlight) 15%, transparent),
+    0 8px 40px rgba(0, 0, 0, 0.8);
+}
+
+.case-backlight {
+  position: absolute;
+  bottom: 0;
+  left: 10%; right: 10%;
+  height: 50%;
+  background: radial-gradient(ellipse at bottom, var(--backlight) 0%, transparent 70%);
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.deck-case:hover .case-backlight   { opacity: 0.85; }
+.deck-case.selected .case-backlight { opacity: 1; }
+
+.case-edge {
+  position: absolute;
+  pointer-events: none;
+  background: var(--primary-colour);
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.deck-case:hover .case-edge,
+.deck-case.selected .case-edge { opacity: 0.9; }
+
+.case-edge-top    { top: 0;    left: 8%; right: 8%; height: 1px; box-shadow: 0 0 6px var(--primary-colour); }
+.case-edge-bottom { bottom: 0; left: 8%; right: 8%; height: 1px; box-shadow: 0 0 6px var(--primary-colour); }
+.case-edge-left   { left: 0;   top: 8%; bottom: 8%; width: 1px;  box-shadow: 0 0 6px var(--primary-colour); }
+.case-edge-right  { right: 0;  top: 8%; bottom: 8%; width: 1px;  box-shadow: 0 0 6px var(--primary-colour); }
+
+.case-interior {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-stack {
+  position: relative;
+  width: 52%;
+  aspect-ratio: 2.5 / 3.5;
+}
+
+.card-shadow, .card-front {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+}
+
+.card-s3 { background: rgba(255,255,255,0.02); transform: translate(6px, 6px); border: 1px solid rgba(255,255,255,0.04); }
+.card-s2 { background: rgba(255,255,255,0.03); transform: translate(3px, 3px); border: 1px solid rgba(255,255,255,0.05); }
+.card-s1 { background: rgba(255,255,255,0.04); transform: translate(1px, 1px); border: 1px solid rgba(255,255,255,0.07); }
+
+.card-front {
+  background: linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 50%, rgba(0,0,0,0.1) 100%);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.deck-case:hover .card-front {
+  border-color: color-mix(in srgb, var(--primary-colour) 40%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--backlight) 40%, transparent);
+}
+
+.card-front-pattern {
+  position: absolute;
+  inset: 4px;
+  border-radius: 2px;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    rgba(255,255,255,0.012) 4px,
+    rgba(255,255,255,0.012) 5px
+  );
+}
+
+.card-front-icon {
+  position: relative;
+  z-index: 1;
+  font-size: 1.1rem;
+  color: var(--primary-colour);
+  opacity: 0.4;
+  text-shadow: 0 0 10px var(--primary-colour);
+  transition: opacity 0.3s ease;
+}
+
+.deck-case:hover .card-front-icon { opacity: 0.8; }
+
+.case-mist {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 30%;
+  background: linear-gradient(to top, color-mix(in srgb, var(--backlight) 15%, transparent) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.case-reflection {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.03) 0%, transparent 100%);
+  pointer-events: none;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.case-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  text-align: center;
+  padding: 0 0.25rem;
+}
+
+.case-colours {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin-bottom: 0.1rem;
+}
+
+.mana-pip {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pip-colour);
+  box-shadow: 0 0 6px var(--pip-colour), 0 0 12px color-mix(in srgb, var(--pip-colour) 40%, transparent);
+  display: block;
+}
+
+.case-name {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-hud);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  transition: color 0.2s ease;
+}
+
+.deck-case:hover .case-name,
+.deck-case.selected .case-name {
+  color: var(--primary-colour);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--primary-colour) 50%, transparent);
+}
+
+.case-sub {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.case-select-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: calc(var(--radius-md) + 2px);
+  border: 1px solid var(--primary-colour);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--primary-colour) 40%, transparent);
+  pointer-events: none;
+  animation: selectPulse 2s ease-in-out infinite;
+}
+
+@keyframes selectPulse {
+  0%, 100% { opacity: 0.8; }
+  50%       { opacity: 0.4; }
+}
