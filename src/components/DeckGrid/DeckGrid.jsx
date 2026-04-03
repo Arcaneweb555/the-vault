@@ -1,40 +1,46 @@
 import { useState } from 'react'
-import { DECKS } from '../../data/decks'
+import { useDeckStore } from '../../stores/deckStore'
 import DeckCase from './DeckCase'
 import DeckViewer from '../DeckViewer/DeckViewer'
 import './DeckGrid.css'
 
 const BANK_SIZE = 10
-const TOTAL_BANKS = Math.ceil(DECKS.length / BANK_SIZE)
 
 export default function DeckGrid() {
-  const [currentBank, setCurrentBank] = useState(0)
-  const [slideDir, setSlideDir] = useState('none')
-  const [selectedDeck, setSelectedDeck] = useState(null)
+  const decks = useDeckStore(s => s.decks)
+  const selectedDeckId = useDeckStore(s => s.selectedDeckId)
+  const currentBank = useDeckStore(s => s.currentBank)
+  const selectDeck = useDeckStore(s => s.selectDeck)
+  const setBank = useDeckStore(s => s.setBank)
 
-  const bankDecks = DECKS.slice(currentBank * BANK_SIZE, (currentBank + 1) * BANK_SIZE)
+  const [slideDir, setSlideDir] = useState('none')
+
+  const totalBanks = Math.ceil(decks.length / BANK_SIZE)
+  const bankDecks = decks.slice(currentBank * BANK_SIZE, (currentBank + 1) * BANK_SIZE)
   const deckStart = currentBank * BANK_SIZE + 1
-  const deckEnd = Math.min((currentBank + 1) * BANK_SIZE, DECKS.length)
+  const deckEnd = Math.min((currentBank + 1) * BANK_SIZE, decks.length)
   const bankLabel = String(currentBank + 1).padStart(2, '0')
-  const totalLabel = String(TOTAL_BANKS).padStart(2, '0')
+  const totalLabel = String(totalBanks).padStart(2, '0')
+
+  const selectedDeck = decks.find(d => d.id === selectedDeckId) ?? null
 
   const navigate = (dir) => {
     if (dir === 'prev' && currentBank === 0) return
-    if (dir === 'next' && currentBank === TOTAL_BANKS - 1) return
+    if (dir === 'next' && currentBank === totalBanks - 1) return
     setSlideDir(dir === 'next' ? 'left' : 'right')
-    setSelectedDeck(null)
-    setCurrentBank(prev => dir === 'next' ? prev + 1 : prev - 1)
+    selectDeck(null)
+    setBank(currentBank + (dir === 'next' ? 1 : -1))
   }
 
   const jumpToBank = (i) => {
     if (i === currentBank) return
     setSlideDir(i > currentBank ? 'left' : 'right')
-    setSelectedDeck(null)
-    setCurrentBank(i)
+    selectDeck(null)
+    setBank(i)
   }
 
   const handleSelect = (deck) => {
-    setSelectedDeck(prev => prev?.id === deck.id ? null : deck)
+    selectDeck(selectedDeckId === deck.id ? null : deck.id)
   }
 
   return (
@@ -46,7 +52,7 @@ export default function DeckGrid() {
           <span className="hud-sep">/</span>
           <span className="hud-value">BANK <span className="hud-bright">{bankLabel}</span>/{totalLabel}</span>
           <span className="hud-sep">/</span>
-          <span className="hud-value">DECKS {deckStart}–{deckEnd} OF {DECKS.length}</span>
+          <span className="hud-value">DECKS {deckStart}–{deckEnd} OF {decks.length}</span>
         </div>
         <div className="hud-right">
           <div className="hud-tag">MTG</div>
@@ -78,7 +84,7 @@ export default function DeckGrid() {
                 key={deck.id}
                 deck={deck}
                 index={i}
-                isSelected={selectedDeck?.id === deck.id}
+                isSelected={selectedDeckId === deck.id}
                 onClick={() => handleSelect(deck)}
               />
             ))}
@@ -88,7 +94,7 @@ export default function DeckGrid() {
         <button
           className="carousel-arrow carousel-arrow-next"
           onClick={() => navigate('next')}
-          disabled={currentBank === TOTAL_BANKS - 1}
+          disabled={currentBank === totalBanks - 1}
           aria-label="Next bank"
         >
           ▶
@@ -96,7 +102,7 @@ export default function DeckGrid() {
       </div>
 
       <div className="bank-indicator">
-        {Array.from({ length: TOTAL_BANKS }, (_, i) => (
+        {Array.from({ length: totalBanks }, (_, i) => (
           <button
             key={i}
             className={`bank-dot${i === currentBank ? ' active' : ''}`}
@@ -109,7 +115,7 @@ export default function DeckGrid() {
       {selectedDeck && (
         <DeckViewer
           deck={selectedDeck}
-          onClose={() => setSelectedDeck(null)}
+          onClose={() => selectDeck(null)}
         />
       )}
 
