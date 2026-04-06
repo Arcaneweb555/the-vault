@@ -1,9 +1,9 @@
 export const MANA_CONFIG = {
-  W: { symbol: 'W', name: 'White',      hex: '#ddd8ff' },
-  U: { symbol: 'U', name: 'Blue',       hex: '#00aaff' },
-  B: { symbol: 'B', name: 'Black',      hex: '#cc44ff' },
-  R: { symbol: 'R', name: 'Red',        hex: '#ff4422' },
-  G: { symbol: 'G', name: 'Green',      hex: '#00ff88' },
+  W: { symbol: 'W', name: 'White',      hex: '#e8d5b0' },
+  U: { symbol: 'U', name: 'Blue',       hex: '#1a6fd4' },
+  B: { symbol: 'B', name: 'Black',      hex: '#d44dff' },
+  R: { symbol: 'R', name: 'Red',        hex: '#e8705a' },
+  G: { symbol: 'G', name: 'Green',      hex: '#6dd68a' },
   C: { symbol: 'C', name: 'Colourless', hex: '#aabbcc' },
 }
 

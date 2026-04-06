@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&family=Share+Tech+Mono&display=swap');
 
+/* Register --selected-colour as a typed property so CSS can interpolate it */
+@property --selected-colour {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(2, 4, 8, 0);
+}
+
 :root {
   --void: #020408;
   --deep: #060d14;
@@ -19,12 +26,12 @@
   --gold-dim: rgba(255, 184, 0, 0.1);
   --gold-glow: rgba(255, 184, 0, 0.35);
 
-  --mana-w: #ddd8ff;
-  --mana-u: #00aaff;
-  --mana-b: #cc44ff;
-  --mana-r: #ff4422;
-  --mana-g: #00ff88;
-  --mana-c: #aabbcc;
+  --mana-w: #e8d5b0;
+  --mana-u: #1a6fd4;
+  --mana-b: #d44dff;
+  --mana-r: #e8705a;
+  --mana-g: #6dd68a;
+  --mana-c: #a8a0c0;
 
   --text-hud: #c8e8ff;
   --text-primary: #8ab8d4;
@@ -47,6 +54,10 @@
   --shadow-deep: 0 8px 32px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6);
 }
 
+:root {
+  transition: --selected-colour 0.6s ease;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { font-size: 16px; -webkit-font-smoothing: antialiased; }
@@ -59,6 +70,7 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   background-image:
+    radial-gradient(ellipse 110% 55% at 50% 0%, var(--selected-colour) 0%, transparent 62%),
     radial-gradient(ellipse 120% 50% at 50% 0%, rgba(0,80,140,0.14) 0%, transparent 65%),
     radial-gradient(ellipse 60% 40% at 15% 100%, rgba(80,0,140,0.07) 0%, transparent 50%),
     radial-gradient(ellipse 60% 40% at 85% 100%, rgba(0,140,80,0.05) 0%, transparent 50%);

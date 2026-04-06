@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useDeckStore } from '../../stores/deckStore'
 import DeckCase from './DeckCase'
 import DeckViewer from '../DeckViewer/DeckViewer'
@@ -12,8 +12,22 @@ export default function DeckGrid() {
   const currentBank = useDeckStore(s => s.currentBank)
   const selectDeck = useDeckStore(s => s.selectDeck)
   const setBank = useDeckStore(s => s.setBank)
+  const selectedColour = useDeckStore(s => s.selectedColour)
 
   const [slideDir, setSlideDir] = useState('none')
+  const [anchorRect, setAnchorRect] = useState(null)
+
+  // Drive body background reactive lighting from selected deck colour
+  useEffect(() => {
+    if (selectedColour) {
+      const r = parseInt(selectedColour.slice(1, 3), 16)
+      const g = parseInt(selectedColour.slice(3, 5), 16)
+      const b = parseInt(selectedColour.slice(5, 7), 16)
+      document.documentElement.style.setProperty('--selected-colour', `rgba(${r},${g},${b},0.18)`)
+    } else {
+      document.documentElement.style.setProperty('--selected-colour', 'rgba(42,37,64,0)')
+    }
+  }, [selectedColour])
 
   const totalBanks = Math.ceil(decks.length / BANK_SIZE)
   const bankDecks = decks.slice(currentBank * BANK_SIZE, (currentBank + 1) * BANK_SIZE)
@@ -29,6 +43,7 @@ export default function DeckGrid() {
     if (dir === 'next' && currentBank === totalBanks - 1) return
     setSlideDir(dir === 'next' ? 'left' : 'right')
     selectDeck(null)
+    setAnchorRect(null)
     setBank(currentBank + (dir === 'next' ? 1 : -1))
   }
 
@@ -36,11 +51,19 @@ export default function DeckGrid() {
     if (i === currentBank) return
     setSlideDir(i > currentBank ? 'left' : 'right')
     selectDeck(null)
+    setAnchorRect(null)
     setBank(i)
   }
 
-  const handleSelect = (deck) => {
-    selectDeck(selectedDeckId === deck.id ? null : deck.id)
+  const handleSelect = (deck, e) => {
+    const isDeselecting = selectedDeckId === deck.id
+    selectDeck(isDeselecting ? null : deck.id)
+    setAnchorRect(isDeselecting ? null : e.currentTarget.getBoundingClientRect())
+  }
+
+  const handleClose = () => {
+    selectDeck(null)
+    setAnchorRect(null)
   }
 
   return (
@@ -85,7 +108,7 @@ export default function DeckGrid() {
                 deck={deck}
                 index={i}
                 isSelected={selectedDeckId === deck.id}
-                onClick={() => handleSelect(deck)}
+                onClick={(e) => handleSelect(deck, e)}
               />
             ))}
           </div>
@@ -115,7 +138,8 @@ export default function DeckGrid() {
       {selectedDeck && (
         <DeckViewer
           deck={selectedDeck}
-          onClose={() => selectDeck(null)}
+          onClose={handleClose}
+          anchorRect={anchorRect}
         />
       )}
 

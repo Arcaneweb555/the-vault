@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { DECKS as DEFAULT_DECKS } from '../data/decks'
+import { MANA_CONFIG } from '../utils/manaConfig'
 
 // One-time migration: remove the old raw-array format written by the manual
 // localStorage implementation so persist middleware can start with a clean slate.
@@ -18,6 +19,7 @@ export const useDeckStore = create(
     (set, get) => ({
       decks: DEFAULT_DECKS,
       selectedDeckId: null,
+      selectedColour: null,
       currentBank: 0,
 
       addDeck: (deck) => set(s => ({ decks: [...s.decks, deck] })),
@@ -31,9 +33,20 @@ export const useDeckStore = create(
       deleteDeck: (id) => set(s => ({
         decks: s.decks.filter(d => d.id !== id),
         selectedDeckId: s.selectedDeckId === id ? null : s.selectedDeckId,
+        selectedColour: s.selectedDeckId === id ? null : s.selectedColour,
       })),
 
-      selectDeck: (id) => set({ selectedDeckId: id }),
+      updateNotes: (id, notes) => set(s => ({
+        decks: s.decks.map(d => d.id === id ? { ...d, notes } : d),
+      })),
+
+      selectDeck: (id) => {
+        const deck = id ? get().decks.find(d => d.id === id) : null
+        const selectedColour = deck?.colours?.[0]
+          ? (MANA_CONFIG[deck.colours[0]]?.hex ?? null)
+          : null
+        set({ selectedDeckId: id, selectedColour })
+      },
 
       setBank: (n) => set({ currentBank: n }),
     }),
