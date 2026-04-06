@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import DeckGrid from './components/DeckGrid/DeckGrid'
 import PackOpener from './components/PackOpener/PackOpener'
+import GameTools from './components/GameTools/GameTools'
 import './index.css'
 import './App.css'
 
@@ -34,6 +35,13 @@ export default function App() {
               <span className="nav-index">02</span>
               <span className="nav-label">PACK SIM</span>
             </button>
+            <button
+              className={`nav-btn ${activeTab === 'game' ? 'active' : ''}`}
+              onClick={() => setActiveTab('game')}
+            >
+              <span className="nav-index">03</span>
+              <span className="nav-label">GAME TOOLS</span>
+            </button>
           </nav>
 
           <div className="header-status">
@@ -48,6 +56,7 @@ export default function App() {
         <div className="main-inner">
           {activeTab === 'vault' && <DeckGrid />}
           {activeTab === 'packs' && <PackOpener />}
+          {activeTab === 'game' && <GameTools />}
         </div>
       </main>
 

@@ -1,0 +1,87 @@
+.game-tools {
+  width: 100%;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── HUD bar ──────────────────────────────────────────────── */
+.game-tools-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.25rem;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  backdrop-filter: blur(12px);
+}
+
+.game-tools-nav {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.panel-tab {
+  position: relative;
+  padding: 0.3rem 0.85rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+
+.panel-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12%;
+  width: 76%;
+  height: 1px;
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
+  transform-origin: center;
+}
+
+.panel-tab:hover {
+  color: var(--text-hud);
+  border-color: rgba(0, 212, 255, 0.15);
+}
+
+.panel-tab.active {
+  color: var(--text-cyan);
+  border-color: rgba(0, 212, 255, 0.28);
+  text-shadow: 0 0 8px var(--cyan-glow);
+}
+
+.panel-tab.active::after {
+  transform: scaleX(1);
+}
+
+.hud-label {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  color: var(--text-muted);
+  letter-spacing: 0.16em;
+}
+
+/* ─── Content area ─────────────────────────────────────────── */
+.game-tools-content {
+  flex: 1;
+  border: 1px solid var(--glass-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  background: rgba(6, 13, 20, 0.45);
+  backdrop-filter: blur(12px);
+  padding: 2rem 2.5rem;
+  overflow: visible;
+}
