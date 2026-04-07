@@ -23,9 +23,11 @@ export default function DeckGrid() {
       const r = parseInt(selectedColour.slice(1, 3), 16)
       const g = parseInt(selectedColour.slice(3, 5), 16)
       const b = parseInt(selectedColour.slice(5, 7), 16)
-      document.documentElement.style.setProperty('--selected-colour', `rgba(${r},${g},${b},0.18)`)
+      document.documentElement.style.setProperty('--selected-colour', `rgba(${r},${g},${b},0.24)`)
+      document.documentElement.style.setProperty('--selected-colour-soft', `rgba(${r},${g},${b},0.12)`)
     } else {
       document.documentElement.style.setProperty('--selected-colour', 'rgba(42,37,64,0)')
+      document.documentElement.style.setProperty('--selected-colour-soft', 'rgba(42,37,64,0)')
     }
   }, [selectedColour])
 

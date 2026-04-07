@@ -202,31 +202,32 @@
 }
 
 .deck-case:hover   { transform: translateY(-6px); }
-.deck-case.selected { transform: translateY(-4px); }
+.deck-case.selected { transform: translateY(-4px); animation: selectedPulse 2.8s ease-in-out infinite; }
 
 .case-body {
   position: relative;
   aspect-ratio: 3 / 4;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: rgba(6, 13, 20, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(10, 18, 28, 0.96) 0%, rgba(7, 12, 20, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .deck-case:hover .case-body {
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.18);
   box-shadow:
-    0 0 30px color-mix(in srgb, var(--backlight) 20%, transparent),
-    0 8px 40px rgba(0, 0, 0, 0.8);
+    0 0 40px color-mix(in srgb, var(--backlight) 28%, transparent),
+    0 12px 50px rgba(0, 0, 0, 0.88);
 }
 
 .deck-case.selected .case-body {
-  border-color: color-mix(in srgb, var(--primary-colour) 40%, transparent);
+  animation: selectedGlowPulse 2.8s ease-in-out infinite;
+  border-color: color-mix(in srgb, var(--primary-colour) 50%, rgba(255, 255, 255, 0.2));
   box-shadow:
-    0 0 40px color-mix(in srgb, var(--backlight) 30%, transparent),
-    0 0 80px color-mix(in srgb, var(--backlight) 15%, transparent),
-    0 8px 40px rgba(0, 0, 0, 0.8);
+    0 0 60px color-mix(in srgb, var(--backlight) 35%, transparent),
+    0 0 100px color-mix(in srgb, var(--backlight) 18%, transparent),
+    0 12px 50px rgba(0, 0, 0, 0.88);
 }
 
 .case-backlight {
@@ -234,30 +235,31 @@
   bottom: 0;
   left: 10%; right: 10%;
   height: 50%;
-  background: radial-gradient(ellipse at bottom, var(--backlight) 0%, transparent 70%);
-  opacity: 0.5;
+  background: radial-gradient(ellipse at bottom, color-mix(in srgb, var(--backlight) 80%, #ffffff 30%) 0%, transparent 70%);
+  opacity: 0.55;
+  filter: blur(10px);
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
 
-.deck-case:hover .case-backlight   { opacity: 0.85; }
+.deck-case:hover .case-backlight   { opacity: 0.95; }
 .deck-case.selected .case-backlight { opacity: 1; }
 
 .case-edge {
   position: absolute;
   pointer-events: none;
   background: var(--primary-colour);
-  opacity: 0.5;
+  opacity: 0.65;
   transition: opacity 0.3s ease;
 }
 
 .deck-case:hover .case-edge,
-.deck-case.selected .case-edge { opacity: 0.9; }
+.deck-case.selected .case-edge { opacity: 1; }
 
-.case-edge-top    { top: 0;    left: 8%; right: 8%; height: 1px; box-shadow: 0 0 6px var(--primary-colour); }
-.case-edge-bottom { bottom: 0; left: 8%; right: 8%; height: 1px; box-shadow: 0 0 6px var(--primary-colour); }
-.case-edge-left   { left: 0;   top: 8%; bottom: 8%; width: 1px;  box-shadow: 0 0 6px var(--primary-colour); }
-.case-edge-right  { right: 0;  top: 8%; bottom: 8%; width: 1px;  box-shadow: 0 0 6px var(--primary-colour); }
+.case-edge-top    { top: 0;    left: 8%; right: 8%; height: 1px; box-shadow: 0 0 12px var(--primary-colour); }
+.case-edge-bottom { bottom: 0; left: 8%; right: 8%; height: 1px; box-shadow: 0 0 12px var(--primary-colour); }
+.case-edge-left   { left: 0;   top: 8%; bottom: 8%; width: 1px;  box-shadow: 0 0 12px var(--primary-colour); }
+.case-edge-right  { right: 0;  top: 8%; bottom: 8%; width: 1px;  box-shadow: 0 0 12px var(--primary-colour); }
 
 .case-interior {
   position: absolute;
@@ -285,8 +287,8 @@
 .card-s1 { background: rgba(255,255,255,0.04); transform: translate(1px, 1px); border: 1px solid rgba(255,255,255,0.07); }
 
 .card-front {
-  background: linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 50%, rgba(0,0,0,0.1) 100%);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(160deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 45%, rgba(0,0,0,0.14) 100%);
+  border: 1px solid rgba(255,255,255,0.14);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -294,8 +296,8 @@
 }
 
 .deck-case:hover .card-front {
-  border-color: color-mix(in srgb, var(--primary-colour) 40%, transparent);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--backlight) 40%, transparent);
+  border-color: color-mix(in srgb, var(--primary-colour) 55%, rgba(255,255,255,0.2));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--backlight) 45%, transparent);
 }
 
 .card-front-pattern {
@@ -307,8 +309,8 @@
     45deg,
     transparent,
     transparent 4px,
-    rgba(255,255,255,0.012) 4px,
-    rgba(255,255,255,0.012) 5px
+    rgba(255,255,255,0.016) 4px,
+    rgba(255,255,255,0.016) 5px
   );
 }
 
@@ -317,19 +319,19 @@
   z-index: 1;
   font-size: 1.1rem;
   color: var(--primary-colour);
-  opacity: 0.4;
-  text-shadow: 0 0 10px var(--primary-colour);
+  opacity: 0.45;
+  text-shadow: 0 0 16px var(--primary-colour);
   transition: opacity 0.3s ease;
 }
 
-.deck-case:hover .card-front-icon { opacity: 0.8; }
+.deck-case:hover .card-front-icon { opacity: 0.95; }
 
 .case-mist {
   position: absolute;
   bottom: 0;
   left: 0; right: 0;
   height: 30%;
-  background: linear-gradient(to top, color-mix(in srgb, var(--backlight) 15%, transparent) 0%, transparent 100%);
+  background: linear-gradient(to top, color-mix(in srgb, var(--backlight) 35%, transparent) 0%, transparent 100%);
   pointer-events: none;
 }
 
@@ -337,7 +339,7 @@
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 40%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.03) 0%, transparent 100%);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, transparent 100%);
   pointer-events: none;
   border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
@@ -363,7 +365,7 @@
   height: 12px;
   border-radius: 50%;
   background: var(--pip-colour);
-  box-shadow: 0 0 6px var(--pip-colour), 0 0 12px color-mix(in srgb, var(--pip-colour) 40%, transparent);
+  box-shadow: 0 0 8px var(--pip-colour), 0 0 18px color-mix(in srgb, var(--pip-colour) 45%, transparent);
   display: block;
 }
 
@@ -401,14 +403,40 @@
 .case-select-ring {
   position: absolute;
   inset: -2px;
+  transform-origin: center;
   border-radius: calc(var(--radius-md) + 2px);
   border: 1px solid var(--primary-colour);
   box-shadow: 0 0 12px color-mix(in srgb, var(--primary-colour) 40%, transparent);
   pointer-events: none;
-  animation: selectPulse 2s ease-in-out infinite;
+  animation: selectPulse 2s ease-in-out infinite, selectRingScale 2.8s ease-in-out infinite;
 }
 
 @keyframes selectPulse {
   0%, 100% { opacity: 0.8; }
   50%       { opacity: 0.4; }
+}
+
+@keyframes selectRingScale {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+
+@keyframes selectedPulse {
+  0%, 100% { transform: translateY(-4px) scale(1); }
+  50%       { transform: translateY(-4px) scale(1.01); }
+}
+
+@keyframes selectedGlowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 60px color-mix(in srgb, var(--backlight) 35%, transparent),
+      0 0 100px color-mix(in srgb, var(--backlight) 18%, transparent),
+      0 12px 50px rgba(0, 0, 0, 0.88);
+  }
+  50% {
+    box-shadow:
+      0 0 72px color-mix(in srgb, var(--backlight) 40%, transparent),
+      0 0 110px color-mix(in srgb, var(--backlight) 22%, transparent),
+      0 12px 50px rgba(0, 0, 0, 0.88);
+  }
 }

@@ -107,7 +107,7 @@
 .viewer-sep {
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   flex-shrink: 0;
 }
 
@@ -127,20 +127,21 @@
   gap: 0.75rem;
   flex-shrink: 0;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 
 .viewer-count {
   color: var(--text-cyan);
   letter-spacing: 0.1em;
   white-space: nowrap;
+  font-size: 0.85rem;
 }
 
 .viewer-theme-tag {
   padding: 0.2rem 0.55rem;
   border: 1px solid color-mix(in srgb, var(--viewer-colour) 25%, transparent);
   color: var(--text-secondary);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   letter-spacing: 0.1em;
   border-radius: 1px;
   white-space: nowrap;
@@ -197,7 +198,7 @@
 
 .section-label {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
   letter-spacing: 0.14em;
   margin-bottom: 0.9rem;
@@ -215,7 +216,7 @@
   align-items: center;
   gap: 0.6rem;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
 }
 
 .type-bar-label {
