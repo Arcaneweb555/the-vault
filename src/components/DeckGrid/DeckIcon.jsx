@@ -1,7 +1,15 @@
-import { ICON_PATHS } from '../../utils/deckIcons'
+import { ICON_PATHS, COLOUR_TO_ICON } from '../../utils/deckIcons'
 import { MANA_CONFIG } from '../../utils/manaConfig'
 
-export default function DeckIcon({ iconType, colours = [] }) {
+export default function DeckIcon({ colours = [] }) {
+  if (!colours || colours.length === 0) return null
+
+  // Get icon types for each colour
+  const iconTypes = colours.map(c => COLOUR_TO_ICON[c]).filter(Boolean)
+  if (iconTypes.length === 0) return null
+
+  // For now, use the first icon (we'll replace single/split rendering logic)
+  const iconType = iconTypes[0]
   const iconDef = ICON_PATHS[iconType]
   if (!iconDef) return null
 
@@ -14,46 +22,45 @@ export default function DeckIcon({ iconType, colours = [] }) {
   const primaryColour = colourHexes[0] || '#00d4ff'
   const secondaryColour = colourHexes[1] || null
 
+  // For filled icons with glow effect
   return (
     <svg
       viewBox={iconDef.viewBox}
       className="deck-icon"
       style={{
         '--icon-primary': primaryColour,
-        '--icon-secondary': secondaryColour || primaryColour
+        '--icon-secondary': secondaryColour || primaryColour,
+        '--icon-fill': iconDef.fill ? 'currentColor' : 'none'
       }}
     >
       {isPrimaryOnly ? (
-        // Single color icon
+        // Single color - solid fill
         <path
           d={iconDef.path}
-          fill="none"
+          fill={iconDef.fill ? 'currentColor' : 'none'}
           stroke="currentColor"
-          strokeWidth="1"
+          strokeWidth={iconDef.fill ? '0' : '1.2'}
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="icon-stroke primary"
+          className="icon-path primary"
+          style={{ color: primaryColour }}
         />
       ) : (
-        // Split color icon - two halves
+        // Multi-color split - left and right halves
         <>
-          {/* Split into left and right halves using clipPath */}
           <defs>
-            <clipPath id="leftHalf">
+            <clipPath id={`leftHalf-${iconType}`}>
               <rect
-                x={parseInt(iconDef.viewBox.split(' ')[0])}
-                y={parseInt(iconDef.viewBox.split(' ')[1])}
+                x="0"
+                y="0"
                 width={parseInt(iconDef.viewBox.split(' ')[2]) / 2}
                 height={parseInt(iconDef.viewBox.split(' ')[3])}
               />
             </clipPath>
-            <clipPath id="rightHalf">
+            <clipPath id={`rightHalf-${iconType}`}>
               <rect
-                x={
-                  parseInt(iconDef.viewBox.split(' ')[0]) +
-                  parseInt(iconDef.viewBox.split(' ')[2]) / 2
-                }
-                y={parseInt(iconDef.viewBox.split(' ')[1])}
+                x={parseInt(iconDef.viewBox.split(' ')[2]) / 2}
+                y="0"
                 width={parseInt(iconDef.viewBox.split(' ')[2]) / 2}
                 height={parseInt(iconDef.viewBox.split(' ')[3])}
               />
@@ -63,36 +70,36 @@ export default function DeckIcon({ iconType, colours = [] }) {
           {/* Left half with primary color */}
           <path
             d={iconDef.path}
-            fill="none"
+            fill={iconDef.fill ? 'var(--icon-primary)' : 'none'}
             stroke="var(--icon-primary)"
-            strokeWidth="1"
+            strokeWidth={iconDef.fill ? '0' : '1.2'}
             strokeLinecap="round"
             strokeLinejoin="round"
-            clipPath="url(#leftHalf)"
-            className="icon-stroke primary"
+            clipPath={`url(#leftHalf-${iconType})`}
+            className="icon-path primary"
           />
 
           {/* Right half with secondary color */}
           <path
             d={iconDef.path}
-            fill="none"
+            fill={iconDef.fill ? 'var(--icon-secondary)' : 'none'}
             stroke="var(--icon-secondary)"
-            strokeWidth="1"
+            strokeWidth={iconDef.fill ? '0' : '1.2'}
             strokeLinecap="round"
             strokeLinejoin="round"
-            clipPath="url(#rightHalf)"
-            className="icon-stroke secondary"
+            clipPath={`url(#rightHalf-${iconType})`}
+            className="icon-path secondary"
           />
 
-          {/* Full outline for definition */}
+          {/* Subtle outline to define edges of split */}
           <path
             d={iconDef.path}
             fill="none"
-            stroke="rgba(255,255,255,0.2)"
-            strokeWidth="0.5"
+            stroke="rgba(255,255,255,0.15)"
+            strokeWidth="0.8"
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity="0.6"
+            opacity="0.4"
           />
         </>
       )}

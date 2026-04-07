@@ -1,5 +1,4 @@
 import { MANA_CONFIG, getColourBacklight } from '../../utils/manaConfig'
-import { getIconType } from '../../utils/deckIcons'
 import DeckIcon from './DeckIcon'
 import './DeckGrid.css'
 
@@ -7,7 +6,6 @@ export default function DeckCase({ deck, index, isSelected, onClick }) {
   const colours = deck.colours.map(c => MANA_CONFIG[c]).filter(Boolean)
   const backlight = getColourBacklight(deck.colours)
   const primaryColour = colours[0]?.hex || '#00d4ff'
-  const iconType = getIconType(deck.theme)
 
   return (
     <button
@@ -34,7 +32,7 @@ export default function DeckCase({ deck, index, isSelected, onClick }) {
             <div className="card-shadow card-s1" />
             <div className="card-front">
               <div className="card-front-pattern" />
-              <DeckIcon iconType={iconType} colours={deck.colours} />
+              <DeckIcon colours={deck.colours} />
             </div>
           </div>
           <div className="case-mist" />

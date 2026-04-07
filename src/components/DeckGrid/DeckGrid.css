@@ -329,21 +329,22 @@
 .deck-icon {
   position: relative;
   z-index: 1;
-  width: 1.8rem;
-  height: 1.8rem;
-  opacity: 0.5;
+  width: 2rem;
+  height: 2rem;
+  opacity: 0.6;
   transition: opacity 0.3s ease, filter 0.3s ease;
-  filter: drop-shadow(0 0 8px var(--icon-primary));
+  filter: drop-shadow(0 0 10px var(--icon-primary));
+  color: var(--icon-primary);
 }
 
 .deck-case:hover .deck-icon {
   opacity: 1;
-  filter: drop-shadow(0 0 12px var(--icon-primary)) drop-shadow(0 0 6px var(--icon-secondary));
+  filter: drop-shadow(0 0 14px var(--icon-primary)) drop-shadow(0 0 7px var(--icon-secondary));
 }
 
 .deck-case.selected .deck-icon {
   opacity: 1;
-  filter: drop-shadow(0 0 16px var(--icon-primary)) drop-shadow(0 0 10px var(--icon-secondary));
+  filter: drop-shadow(0 0 18px var(--icon-primary)) drop-shadow(0 0 10px var(--icon-secondary));
 }
 
 .case-mist {
