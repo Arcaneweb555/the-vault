@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useDeckStore } from '../../stores/deckStore'
 import DeckCase from './DeckCase'
 import DeckViewer from '../DeckViewer/DeckViewer'
+import DeckImporter from '../DeckImporter/DeckImporter'
 import './DeckGrid.css'
 
 const BANK_SIZE = 10
@@ -16,6 +17,7 @@ export default function DeckGrid() {
 
   const [slideDir, setSlideDir] = useState('none')
   const [anchorRect, setAnchorRect] = useState(null)
+  const [isImporterOpen, setIsImporterOpen] = useState(false)
 
   // Drive body background reactive lighting from selected deck colour
   useEffect(() => {
@@ -68,18 +70,34 @@ export default function DeckGrid() {
     setAnchorRect(null)
   }
 
+  const handleImportSuccess = () => {
+    const targetBank = Math.floor(decks.length / BANK_SIZE)
+
+    selectDeck(null)
+    setAnchorRect(null)
+    setIsImporterOpen(false)
+
+    if (targetBank !== currentBank) {
+      setSlideDir(targetBank > currentBank ? 'left' : 'right')
+      setBank(targetBank)
+    }
+  }
+
   return (
     <div className="deck-grid-page">
 
       <div className="grid-hud-bar">
         <div className="hud-left">
-          <span className="hud-label">DECK VAULT</span>
+          <span className="hud-label">ARCANE VAULT</span>
           <span className="hud-sep">/</span>
           <span className="hud-value">BANK <span className="hud-bright">{bankLabel}</span>/{totalLabel}</span>
           <span className="hud-sep">/</span>
           <span className="hud-value">DECKS {deckStart}–{deckEnd} OF {decks.length}</span>
         </div>
         <div className="hud-right">
+          <button className="hud-action" onClick={() => setIsImporterOpen(true)}>
+            + ADD DECK
+          </button>
           <div className="hud-tag">MTG</div>
           <div className="hud-tag">COMMANDER</div>
           <div className="hud-ping">
@@ -144,6 +162,12 @@ export default function DeckGrid() {
           anchorRect={anchorRect}
         />
       )}
+
+      <DeckImporter
+        isOpen={isImporterOpen}
+        onClose={() => setIsImporterOpen(false)}
+        onImportSuccess={handleImportSuccess}
+      />
 
     </div>
   )

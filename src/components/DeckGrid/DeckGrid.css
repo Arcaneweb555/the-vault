@@ -37,6 +37,25 @@
   gap: 0.75rem;
 }
 
+.hud-action {
+  padding: 0.22rem 0.65rem;
+  border: 1px solid rgba(0, 212, 255, 0.16);
+  border-radius: 1px;
+  background: rgba(0, 212, 255, 0.05);
+  color: var(--text-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hud-action:hover {
+  border-color: rgba(0, 212, 255, 0.5);
+  background: rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.12);
+}
+
 .hud-tag {
   padding: 0.15rem 0.5rem;
   border: 1px solid rgba(0, 212, 255, 0.15);
@@ -84,8 +103,9 @@
 /* 5 columns × 2 rows = 10 decks per bank */
 .cases-bank {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1.5rem;
+  align-items: start;
 }
 
 /* ── Slide Transitions (triggered by key re-mount on .cases-bank) ── */
@@ -188,6 +208,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -206,7 +228,9 @@
 
 .case-body {
   position: relative;
-  aspect-ratio: 3 / 4;
+  width: 100%;
+  aspect-ratio: 2.5 / 3.5;
+  flex: 0 0 auto;
   border-radius: var(--radius-md);
   overflow: hidden;
   background: linear-gradient(180deg, rgba(10, 18, 28, 0.96) 0%, rgba(7, 12, 20, 0.9) 100%);
@@ -329,22 +353,29 @@
 .deck-icon {
   position: relative;
   z-index: 1;
-  width: 2rem;
-  height: 2rem;
-  opacity: 0.6;
-  transition: opacity 0.3s ease, filter 0.3s ease;
-  filter: drop-shadow(0 0 10px var(--icon-primary));
-  color: var(--icon-primary);
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: contain;
+  opacity: 0.72;
+  transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+  filter:
+    drop-shadow(0 0 8px color-mix(in srgb, var(--icon-primary) 65%, transparent))
+    drop-shadow(0 0 14px color-mix(in srgb, var(--icon-secondary) 45%, transparent));
 }
 
 .deck-case:hover .deck-icon {
   opacity: 1;
-  filter: drop-shadow(0 0 14px var(--icon-primary)) drop-shadow(0 0 7px var(--icon-secondary));
+  transform: scale(1.03);
+  filter:
+    drop-shadow(0 0 12px color-mix(in srgb, var(--icon-primary) 80%, transparent))
+    drop-shadow(0 0 22px color-mix(in srgb, var(--icon-secondary) 60%, transparent));
 }
 
 .deck-case.selected .deck-icon {
   opacity: 1;
-  filter: drop-shadow(0 0 18px var(--icon-primary)) drop-shadow(0 0 10px var(--icon-secondary));
+  filter:
+    drop-shadow(0 0 16px color-mix(in srgb, var(--icon-primary) 85%, transparent))
+    drop-shadow(0 0 26px color-mix(in srgb, var(--icon-secondary) 70%, transparent));
 }
 
 .case-mist {

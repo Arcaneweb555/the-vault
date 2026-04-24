@@ -13,21 +13,21 @@ const NOTCH_GAP = 12
 
 export default function DeckViewer({ deck, onClose, anchorRect }) {
   const updateNotes = useDeckStore(s => s.updateNotes)
+  const deleteDeck = useDeckStore(s => s.deleteDeck)
   const [notes, setNotes] = useState(deck.notes ?? '')
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
 
-  // Reset notes when the viewed deck changes
   useEffect(() => {
     setNotes(deck.notes ?? '')
+    setIsConfirmingDelete(false)
   }, [deck.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Escape key
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  // ── Derived data ─────────────────────────────────────────────
   const grouped = useMemo(() => {
     const groups = {}
     for (const card of deck.cards) {
@@ -50,13 +50,11 @@ export default function DeckViewer({ deck, onClose, anchorRect }) {
       type,
       count: cards.reduce((sum, c) => sum + c.quantity, 0),
     })),
-    [grouped]
-  )
+  [grouped])
 
   const maxTypeCount = useMemo(() =>
     Math.max(...typeCounts.map(t => t.count), 1),
-    [typeCounts]
-  )
+  [typeCounts])
 
   const { manaCurve, hasCurveData } = useMemo(() => {
     const curve = {}
@@ -72,7 +70,6 @@ export default function DeckViewer({ deck, onClose, anchorRect }) {
     ? Math.max(...Object.values(manaCurve), 1)
     : 1
 
-  // ── Position calculations ─────────────────────────────────────
   const vw = window.innerWidth
   const vh = window.innerHeight
   const popoverWidth = Math.min(POPOVER_MAX_W, vw - SIDE_MARGIN * 2)
@@ -96,12 +93,15 @@ export default function DeckViewer({ deck, onClose, anchorRect }) {
     width: `${popoverWidth}px`,
   }
 
-  // ── Notes ─────────────────────────────────────────────────────
   const handleNotesBlur = useCallback(() => {
     updateNotes(deck.id, notes)
   }, [deck.id, notes, updateNotes])
 
-  // ── Portal ────────────────────────────────────────────────────
+  const handleDeleteConfirm = useCallback(() => {
+    deleteDeck(deck.id)
+    onClose()
+  }, [deck.id, deleteDeck, onClose])
+
   const content = (
     <>
       <div className="viewer-backdrop" onClick={onClose} />
@@ -109,7 +109,6 @@ export default function DeckViewer({ deck, onClose, anchorRect }) {
       <div className="deck-viewer" style={popoverStyle}>
         <div className="viewer-notch" />
 
-        {/* ── Header ── */}
         <div className="viewer-header">
           <div className="viewer-header-left">
             <div className="viewer-pips">
@@ -129,17 +128,23 @@ export default function DeckViewer({ deck, onClose, anchorRect }) {
           <div className="viewer-header-right">
             <span className="viewer-count">{deck.cardCount} CARDS</span>
             <span className="viewer-theme-tag">{deck.theme}</span>
-            <button className="viewer-close" onClick={onClose} aria-label="Close">✕</button>
+            {isConfirmingDelete ? (
+              <div className="viewer-delete-confirm">
+                <span className="viewer-delete-text">DELETE?</span>
+                <button className="viewer-delete-yes" onClick={handleDeleteConfirm}>YES</button>
+                <button className="viewer-delete-no" onClick={() => setIsConfirmingDelete(false)}>NO</button>
+              </div>
+            ) : (
+              <button className="viewer-delete" onClick={() => setIsConfirmingDelete(true)}>
+                DELETE DECK
+              </button>
+            )}
+            <button className="viewer-close" onClick={onClose} aria-label="Close">X</button>
           </div>
         </div>
 
-        {/* ── Body ── */}
         <div className="viewer-body">
-
-          {/* Left column — Intelligence panel */}
           <div className="viewer-left">
-
-            {/* Section 1: Type Breakdown */}
             <div className="left-section">
               <div className="section-label">TYPE BREAKDOWN</div>
               <div className="type-bars">
@@ -161,7 +166,6 @@ export default function DeckViewer({ deck, onClose, anchorRect }) {
               </div>
             </div>
 
-            {/* Section 2: Mana Curve */}
             <div className="left-section">
               <div className="section-label">MANA CURVE</div>
               {hasCurveData ? (
@@ -190,7 +194,6 @@ export default function DeckViewer({ deck, onClose, anchorRect }) {
               )}
             </div>
 
-            {/* Section 3: Notes & Tactics */}
             <div className="left-section notes-section">
               <div className="section-label">NOTES &amp; TACTICS</div>
               <textarea
@@ -202,10 +205,8 @@ export default function DeckViewer({ deck, onClose, anchorRect }) {
                 spellCheck={false}
               />
             </div>
-
           </div>
 
-          {/* Right column — Card list */}
           <div className="viewer-right">
             {Object.entries(grouped).map(([type, cards]) => (
               <div key={type} className="card-group">
@@ -229,7 +230,6 @@ export default function DeckViewer({ deck, onClose, anchorRect }) {
               </div>
             ))}
           </div>
-
         </div>
       </div>
     </>

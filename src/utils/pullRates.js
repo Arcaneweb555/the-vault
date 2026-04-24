@@ -1,25 +1,53 @@
 /**
  * Pull rate constants for MTG booster pack simulation.
- * Based on official Play Booster rates (2024+, post-ONE redesign).
- *
- * Sources:
- *   - Wizards of the Coast Play Booster FAQ
- *   - Community analysis: ~1 mythic per 7.4 packs, ~1 foil per 3 packs
  */
+
+export const PLAY_BOOSTER = {
+  key: 'play',
+  label: 'Play Booster',
+  description: '14 playable cards + token/art slot, with wildcards and foil',
+  totalCards: 14,
+  rareSlots: 1,
+  uncommonSlots: 3,
+  commonSlots: 6,
+  wildcardSlots: 1,
+  landSlots: 1,
+  bonusSlots: 2,
+  mythicChance: 0.135,
+  foilChance: 0.33,
+}
+
+export const DRAFT_BOOSTER = {
+  key: 'draft',
+  label: 'Draft Booster',
+  description: '15 cards - classic limited format',
+  totalCards: 15,
+  rareSlots: 1,
+  uncommonSlots: 3,
+  commonSlots: 10,
+  landSlots: 1,
+  mythicChance: 0.125,
+  foilChance: 0.2,
+}
+
+export const COLLECTOR_BOOSTER = {
+  key: 'collector',
+  label: 'Collector Booster',
+  description: '15 cards - rare-heavy, premium treatments, nearly all foil',
+  totalCards: 15,
+  rareSlots: 5,
+  uncommonSlots: 4,
+  commonSlots: 5,
+  specialSlots: 1,
+  mythicChance: 0.25,
+  foilChance: 1,
+}
 
 /** @type {{ [packType: string]: Object }} */
 export const PULL_RATES = {
-  play: {
-    totalCards: 14,
-    rareSlots: 1,       // 1 rare/mythic slot
-    uncommonSlots: 3,   // 3 uncommon slots
-    commonSlots: 6,     // 6 common slots
-    wildcardSlots: 1,   // 1 wildcard (any rarity, foil check applies here)
-    landSlots: 1,       // 1 basic land slot
-    bonusSlots: 2,      // 2 extra commons to reach 14 total
-    mythicChance: 0.135,  // ~13.5% — 1 in 7.4 packs
-    foilChance: 0.33,     // ~33% — wildcard slot foil odds
-  },
+  play: PLAY_BOOSTER,
+  draft: DRAFT_BOOSTER,
+  collector: COLLECTOR_BOOSTER,
 }
 
 export const RARITY_CONFIG = {

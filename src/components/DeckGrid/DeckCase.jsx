@@ -2,7 +2,7 @@ import { MANA_CONFIG, getColourBacklight } from '../../utils/manaConfig'
 import DeckIcon from './DeckIcon'
 import './DeckGrid.css'
 
-export default function DeckCase({ deck, index, isSelected, onClick }) {
+export default function DeckCase({ deck, isSelected, onClick }) {
   const colours = deck.colours.map(c => MANA_CONFIG[c]).filter(Boolean)
   const backlight = getColourBacklight(deck.colours)
   const primaryColour = colours[0]?.hex || '#00d4ff'
@@ -14,7 +14,6 @@ export default function DeckCase({ deck, index, isSelected, onClick }) {
       style={{
         '--backlight': backlight,
         '--primary-colour': primaryColour,
-        animationDelay: `${index * 80}ms`
       }}
       aria-label={`${deck.name} — ${deck.theme}`}
     >
@@ -32,7 +31,7 @@ export default function DeckCase({ deck, index, isSelected, onClick }) {
             <div className="card-shadow card-s1" />
             <div className="card-front">
               <div className="card-front-pattern" />
-              <DeckIcon colours={deck.colours} />
+              <DeckIcon deck={deck} />
             </div>
           </div>
           <div className="case-mist" />

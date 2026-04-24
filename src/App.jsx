@@ -15,8 +15,8 @@ export default function App() {
           <div className="header-brand">
             <div className="brand-diamond">❖</div>
             <div className="brand-text">
-              <div className="brand-title">THE VAULT</div>
-              <div className="brand-sub">TCG // COLLECTION SYSTEM v1.0</div>
+              <div className="brand-title">ARCANE VAULT</div>
+              <div className="brand-sub">Decks. Packs. Play.</div>
             </div>
           </div>
 
@@ -26,21 +26,21 @@ export default function App() {
               onClick={() => setActiveTab('vault')}
             >
               <span className="nav-index">01</span>
-              <span className="nav-label">DECK VAULT</span>
+              <span className="nav-label">ARCANE VAULT</span>
             </button>
             <button
               className={`nav-btn ${activeTab === 'packs' ? 'active' : ''}`}
               onClick={() => setActiveTab('packs')}
             >
               <span className="nav-index">02</span>
-              <span className="nav-label">PACK SIM</span>
+              <span className="nav-label">PACK RIPPER</span>
             </button>
             <button
               className={`nav-btn ${activeTab === 'game' ? 'active' : ''}`}
               onClick={() => setActiveTab('game')}
             >
               <span className="nav-index">03</span>
-              <span className="nav-label">GAME TOOLS</span>
+              <span className="nav-label">TABLE TOOLS</span>
             </button>
           </nav>
 
@@ -61,7 +61,7 @@ export default function App() {
       </main>
 
       <footer className="app-footer">
-        <span className="footer-item">THE VAULT</span>
+        <span className="footer-item">ARCANE VAULT</span>
         <span className="footer-sep">//</span>
         <span className="footer-item">CARD DATA: <a href="https://scryfall.com" target="_blank" rel="noreferrer">SCRYFALL API</a></span>
         <span className="footer-sep">//</span>

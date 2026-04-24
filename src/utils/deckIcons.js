@@ -1,75 +1,159 @@
-/**
- * Mana Color Icon System
- * Maps mana colors to iconic symbols with glowing appearance
- * W: Sun, U: Water drop, B: Skull, R: Fire circle, G: Forest
- */
+import wSymbol from '../assets/mtgsymbols/W.png'
+import uSymbol from '../assets/mtgsymbols/U.png'
+import bSymbol from '../assets/mtgsymbols/B.png'
+import rSymbol from '../assets/mtgsymbols/R.png'
+import gSymbol from '../assets/mtgsymbols/G.png'
+import cSymbol from '../assets/mtgsymbols/C.png'
+import wuSymbol from '../assets/mtgsymbols/WU.png'
+import wbSymbol from '../assets/mtgsymbols/WB.png'
+import ubSymbol from '../assets/mtgsymbols/UB.png'
+import urSymbol from '../assets/mtgsymbols/UR.png'
+import brSymbol from '../assets/mtgsymbols/BR.png'
+import bgSymbol from '../assets/mtgsymbols/BG.png'
+import rwSymbol from '../assets/mtgsymbols/RW.png'
+import rgSymbol from '../assets/mtgsymbols/RG.png'
+import gwSymbol from '../assets/mtgsymbols/GW.png'
+import gbSymbol from '../assets/mtgsymbols/GB.png'
+import { MANA_CONFIG } from './manaConfig'
 
-// Mana color to icon mapping
-export const COLOUR_TO_ICON = {
-  'W': 'sun',      // White: Sun
-  'U': 'droplet',  // Blue: Water drop
-  'B': 'skull',    // Black: Skull
-  'R': 'fireball', // Red: Fire circle
-  'G': 'forest'    // Green: Forest
-};
+const COLOUR_ORDER = ['W', 'U', 'B', 'R', 'G', 'C']
+const BASIC_LAND_TO_COLOUR = {
+  Plains: 'W',
+  'Snow-Covered Plains': 'W',
+  Island: 'U',
+  'Snow-Covered Island': 'U',
+  Swamp: 'B',
+  'Snow-Covered Swamp': 'B',
+  Mountain: 'R',
+  'Snow-Covered Mountain': 'R',
+  Forest: 'G',
+  'Snow-Covered Forest': 'G',
+  Wastes: 'C',
+  'Snow-Covered Wastes': 'C',
+}
 
-/**
- * Get icon types for deck colors in order
- * Returns array of icon types for rendering
- */
-export const getIconsForColours = (colours) => {
-  return colours.map(c => COLOUR_TO_ICON[c] || 'sun');
-};
+export const SYMBOL_ASSETS = {
+  W: wSymbol,
+  U: uSymbol,
+  B: bSymbol,
+  R: rSymbol,
+  G: gSymbol,
+  C: cSymbol,
+  WU: wuSymbol,
+  WB: wbSymbol,
+  UB: ubSymbol,
+  UR: urSymbol,
+  BR: brSymbol,
+  BG: bgSymbol,
+  RW: rwSymbol,
+  RG: rgSymbol,
+  GW: gwSymbol,
+  GB: gbSymbol,
+}
 
-// SVG icon definitions - solid glowing symbols
-export const ICON_PATHS = {
-  sun: {
-    // Sunburst with 8 rays
-    path: 'M8,1 L9,3.5 L11,2 L10,4.5 L12.5,4 L10.5,5.5 L12,7.5 L9.5,6.5 L9.5,9 L8,6.5 L5.5,7.5 L7,5.5 L5,4.5 L7.5,4 L6.5,2 L8.5,3.5 Z M8,5 Q8.5,5 8.5,5.5 Q8.5,6 8,6 Q7.5,6 7.5,5.5 Q7.5,5 8,5',
-    viewBox: '0 0 16 14',
-    fill: true
-  },
-  droplet: {
-    // Water droplet - smooth teardrop
-    path: 'M8,1 Q10,3 10,5.5 Q10,8.5 8,11 Q6,8.5 6,5.5 Q6,3 8,1 Z M8,4 Q8.8,4.8 8.8,5.5 Q8.8,6.5 8,6.5 Q7.2,6.5 7.2,5.5 Q7.2,4.8 8,4',
-    viewBox: '0 0 16 14',
-    fill: true
-  },
-  skull: {
-    // Skull with eye sockets
-    path: 'M8,1 Q5,1.5 4,4 L4,7 Q4,9 5.5,10 L5.5,12 L10.5,12 L10.5,10 Q12,9 12,7 L12,4 Q11,1.5 8,1 Z M5.5,4.5 Q5.5,5.5 6.2,5.5 Q6.8,5.5 6.8,4.5 Q6.8,3.5 6.2,3.5 Q5.5,3.5 5.5,4.5 M11.2,4.5 Q11.2,5.5 10.5,5.5 Q9.8,5.5 9.8,4.5 Q9.8,3.5 10.5,3.5 Q11.2,3.5 11.2,4.5 M8,8 Q7.2,8.5 8,9 Q8.8,8.5 8,8',
-    viewBox: '0 0 16 14',
-    fill: true
-  },
-  fireball: {
-    // Fire circle with flame top
-    path: 'M8,1.5 Q6,2.5 5,4.5 Q4,6.5 4,8.5 Q4,11 6,12.5 Q8,13.5 8,13.5 Q8,13.5 10,12.5 Q12,11 12,8.5 Q12,6.5 11,4.5 Q10,2.5 8,1.5 Z M7,5 Q6.5,5.5 7,6.5 Q7.5,5.5 8,6 Q8.5,5.5 9,6.5 Q9.5,5.5 9,5 Q8,4.5 7,5 Z M8,8.5 Q7,8.5 6.5,9.5 Q7,10 8,10 Q9,10 9.5,9.5 Q9,8.5 8,8.5',
-    viewBox: '0 0 16 14',
-    fill: true
-  },
-  forest: {
-    // Dense forest tree
-    path: 'M8,1 L11,5 L10,5 L12,8.5 L11,8.5 L12,11.5 L4,11.5 L5,8.5 L4,8.5 L6,5 L5,5 Z M6.5,6.5 L9.5,6.5 L8,9 Z M7,10 L9,10 L8.5,11.5',
-    viewBox: '0 0 16 13',
-    fill: true
+function canonicalizePair(first, second) {
+  if (SYMBOL_ASSETS[`${first}${second}`]) {
+    return `${first}${second}`
   }
-};
 
-/**
- * Get split colors for rendering
- */
-export const getSplitColors = (colours) => {
-  if (!colours || colours.length === 0) {
-    return { primary: '#00d4ff', secondary: null };
+  if (SYMBOL_ASSETS[`${second}${first}`]) {
+    return `${second}${first}`
   }
-  
-  if (colours.length === 1) {
-    return { primary: colours[0], secondary: null };
+
+  return `${first}${second}`
+}
+
+function getCardColours(card) {
+  const basicLandColour = BASIC_LAND_TO_COLOUR[card.name]
+  if (basicLandColour) {
+    return [basicLandColour]
   }
-  
-  // For multi-color, return primary and secondary
+
+  if (Array.isArray(card.color_identity) && card.color_identity.length > 0) {
+    return card.color_identity
+  }
+
+  return []
+}
+
+function getDeckColourWeights(deck) {
+  const weights = { W: 0, U: 0, B: 0, R: 0, G: 0, C: 0 }
+
+  for (const card of deck.cards ?? []) {
+    const colours = getCardColours(card)
+    if (colours.length === 0) {
+      continue
+    }
+
+    for (const colour of colours) {
+      if (weights[colour] != null) {
+        weights[colour] += card.quantity ?? 0
+      }
+    }
+  }
+
+  return weights
+}
+
+function sortColoursByWeight(weights) {
+  return Object.entries(weights)
+    .filter(([, count]) => count > 0)
+    .sort((a, b) => {
+      if (b[1] !== a[1]) {
+        return b[1] - a[1]
+      }
+
+      return COLOUR_ORDER.indexOf(a[0]) - COLOUR_ORDER.indexOf(b[0])
+    })
+    .map(([colour]) => colour)
+}
+
+export function getDeckSymbolCode(deck) {
+  const weightedColours = sortColoursByWeight(getDeckColourWeights(deck))
+  const weightedManaColours = weightedColours.filter((colour) => colour !== 'C')
+
+  if (weightedManaColours.length === 0) {
+    if (deck.iconSymbol && SYMBOL_ASSETS[deck.iconSymbol]) {
+      return deck.iconSymbol
+    }
+
+    if (weightedColours.includes('C')) {
+      return 'C'
+    }
+
+    if (Array.isArray(deck.colours) && deck.colours.length >= 2) {
+      return canonicalizePair(deck.colours[0], deck.colours[1])
+    }
+
+    if (Array.isArray(deck.colours) && deck.colours.length === 1) {
+      return deck.colours[0]
+    }
+
+    return 'C'
+  }
+
+  if (weightedManaColours.length === 1) {
+    return weightedManaColours[0]
+  }
+
+  return canonicalizePair(weightedManaColours[0], weightedManaColours[1])
+}
+
+export function getDeckSymbolAsset(deck) {
+  return SYMBOL_ASSETS[getDeckSymbolCode(deck)] ?? SYMBOL_ASSETS.C
+}
+
+export function getDeckSymbolGlow(deck) {
+  const symbolCode = getDeckSymbolCode(deck)
+
+  if (symbolCode.length === 1) {
+    const colour = MANA_CONFIG[symbolCode]?.hex ?? '#00d4ff'
+    return { primary: colour, secondary: colour }
+  }
+
+  const [first, second] = symbolCode.split('')
   return {
-    primary: colours[0],
-    secondary: colours[1]
-  };
-};
+    primary: MANA_CONFIG[first]?.hex ?? '#00d4ff',
+    secondary: MANA_CONFIG[second]?.hex ?? MANA_CONFIG[first]?.hex ?? '#00d4ff',
+  }
+}

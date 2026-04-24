@@ -1,17 +1,17 @@
 import { useState } from 'react'
-import Spindown from './Spindown'
+import HealthDashboard from './HealthDashboard'
 import Board from './Board'
 import Session from './Session'
 import './GameTools.css'
 
 const PANELS = [
-  { id: 'SPINDOWN', label: 'SPINDOWN' },
+  { id: 'HEALTH', label: 'HEALTH' },
   { id: 'BOARD', label: 'BOARD' },
   { id: 'SESSION', label: 'SESSION' },
 ]
 
 export default function GameTools() {
-  const [activePanel, setActivePanel] = useState('SPINDOWN')
+  const [activePanel, setActivePanel] = useState('HEALTH')
 
   return (
     <div className="game-tools">
@@ -27,11 +27,11 @@ export default function GameTools() {
             </button>
           ))}
         </div>
-        <div className="hud-label">GAME TOOLS // COMMANDER UTILITY</div>
+        <div className="hud-label">TABLE TOOLS // COMMANDER COMPANION</div>
       </div>
 
       <div className="game-tools-content">
-        {activePanel === 'SPINDOWN' && <Spindown />}
+        {activePanel === 'HEALTH' && <HealthDashboard />}
         {activePanel === 'BOARD' && <Board />}
         {activePanel === 'SESSION' && <Session />}
       </div>
