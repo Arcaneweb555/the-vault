@@ -73,6 +73,7 @@ export default function PackOpener() {
   const [imageCache, setImageCache] = useState(() => getStoredImageCache())
   const [loadedImages, setLoadedImages] = useState({})
   const [menuCardId, setMenuCardId] = useState(null)
+  const [addedMap, setAddedMap] = useState({})
   const [isDeckCreatorOpen, setIsDeckCreatorOpen] = useState(false)
   const [pendingNewDeckCard, setPendingNewDeckCard] = useState(null)
 
@@ -173,11 +174,19 @@ export default function PackOpener() {
     }
   }
 
-  const handleAddToDeck = (deckId, card) => {
+  const handleAddToDeck = (deckId, deckName, card, cardKey) => {
     if (!deckId || !card?.name) return
     addCardToDeck(deckId, normalisePulledCardForDeck(card))
     selectDeck(deckId)
     setMenuCardId(null)
+    setAddedMap(prev => ({ ...prev, [cardKey]: deckName }))
+    window.setTimeout(() => {
+      setAddedMap(prev => {
+        const next = { ...prev }
+        delete next[cardKey]
+        return next
+      })
+    }, 2000)
   }
 
   const handleCreateDeckStart = (card) => {
@@ -359,10 +368,12 @@ export default function PackOpener() {
               const cardPrice = getCardPrice(card)
               const imageUrl = resolveCardImageUrl(card) || imageCache[card.scryfallId] || null
               const isImageLoaded = !!(imageUrl && loadedImages[card.scryfallId] === imageUrl)
-              const isMenuOpen = menuCardId === `${card.scryfallId}-${index}`
+              const cardKey = `${card.scryfallId}-${index}`
+              const isMenuOpen = menuCardId === cardKey
+              const addedDeckName = addedMap[cardKey]
 
               return (
-                <div key={`${card.scryfallId}-${index}`} className="pack-card-stack">
+                <div key={cardKey} className="pack-card-stack">
                   <div
                     className={`pack-card rarity-${card.rarity}${card.isFoil ? ' foil' : ''}`}
                     style={{ '--card-index': index, '--rarity-colour': rarityConfig.colour, '--rarity-glow': rarityConfig.glow }}
@@ -407,21 +418,24 @@ export default function PackOpener() {
                     <button
                       type="button"
                       className="add-to-deck-btn"
-                      onClick={() => setMenuCardId(isMenuOpen ? null : `${card.scryfallId}-${index}`)}
-                      disabled={!card?.name}
-                      title={card?.name ? 'Add this card to a deck' : 'No valid card selected'}
+                      onClick={() => !addedDeckName && setMenuCardId(isMenuOpen ? null : cardKey)}
+                      style={addedDeckName ? { color: 'var(--cyan)', borderColor: 'rgba(0,212,255,0.4)' } : undefined}
+                      title="Add this card to a deck"
                     >
-                      ADD TO DECK
+                      {addedDeckName ? `ADDED TO ${addedDeckName.toUpperCase()} ✓` : 'ADD TO DECK'}
                     </button>
 
-                    {isMenuOpen && (
-                      <div className="add-to-deck-menu">
+                    {isMenuOpen && !addedDeckName && (
+                      <div
+                        className="add-to-deck-menu"
+                        style={{ borderColor: 'rgba(0,212,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.45), 0 0 18px rgba(0,212,255,0.08)' }}
+                      >
                         {decks.map((deck) => (
                           <button
                             key={deck.id}
                             type="button"
                             className="add-to-deck-menu-item"
-                            onClick={() => handleAddToDeck(deck.id, card)}
+                            onClick={() => handleAddToDeck(deck.id, deck.name, card, cardKey)}
                           >
                             <span>{deck.name}</span>
                             <span className="add-to-deck-menu-meta">{deck.cardCount}</span>

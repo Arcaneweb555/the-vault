@@ -111,6 +111,27 @@ function writePriceCache(data) {
   }
 }
 
+function getCollectorCacheKey(setCode) {
+  return `vault:scryfall:collector:${setCode.toLowerCase()}:${getTodayCacheDate()}`
+}
+
+function readCollectorCache(setCode) {
+  try {
+    const raw = localStorage.getItem(getCollectorCacheKey(setCode))
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+function writeCollectorCache(setCode, data) {
+  try {
+    localStorage.setItem(getCollectorCacheKey(setCode), JSON.stringify(data))
+  } catch {
+    // Ignore localStorage issues.
+  }
+}
+
 function mergePricesIntoPool(pool, priceMap) {
   const mergeGroup = (cards) => cards.map(card => ({
     ...card,
@@ -229,9 +250,11 @@ function addCardToPool(pool, card) {
   }
 }
 
-async function fetchCardsForQuery(query) {
+async function fetchCardsForQuery(query, options = {}) {
   const cards = []
-  let url = `${SCRYFALL_BASE}/cards/search?q=${encodeURIComponent(query)}&include_extras=false`
+  const params = new URLSearchParams({ q: query, include_extras: 'false' })
+  if (options.unique) params.set('unique', options.unique)
+  let url = `${SCRYFALL_BASE}/cards/search?${params}`
 
   while (url) {
     await delay(100)
@@ -274,27 +297,21 @@ async function fetchSetPool(setCode) {
 }
 
 async function fetchCollectorPool(setCode, regularPool) {
-  const normalizedSetCode = setCode.toLowerCase()
-  const cacheKey = `vault:scryfall:collector:${POOL_CACHE_VERSION}:${normalizedSetCode}`
-  const cached = readCache(cacheKey, POOL_CACHE_TTL)
+  const cached = readCollectorCache(setCode)
   if (cached) return cached
 
-  const cards = await fetchCardsForQuery(`set:${setCode} unique:prints`)
-  const premiumCards = cards.filter(isCollectorEligible)
+  const query = `set:${setCode} (frame:extendedart OR is:showcase OR is:borderless OR is:etched)`
+  const cards = await fetchCardsForQuery(query, { unique: 'cards' })
 
-  const collectorPool = buildPoolFromCards(premiumCards)
-
-  if (premiumCards.length === 0) {
-    const fallbackPool = {
-      ...regularPool,
-      collectorFallback: true,
-    }
-    writeCache(cacheKey, fallbackPool)
-    return fallbackPool
+  if (cards.length < 15) {
+    const fallback = { ...regularPool, collectorFallback: true }
+    writeCollectorCache(setCode, fallback)
+    return fallback
   }
 
-  writeCache(cacheKey, collectorPool)
-  return collectorPool
+  const pool = buildPoolFromCards(cards)
+  writeCollectorCache(setCode, pool)
+  return pool
 }
 
 async function fetchSetPrices(setCode) {
@@ -334,22 +351,6 @@ function getAllRareOrMythicCards(pool) {
   return [...pool.mythics, ...pool.rares]
 }
 
-function pickFoilWeighted(arr, fallback = []) {
-  const src = arr.length > 0 ? arr : fallback
-  if (src.length === 0) return null
-
-  const weighted = src.flatMap(card => {
-    const supportsPremiumFinish =
-      card.finishes?.includes('foil') ||
-      card.finishes?.includes('etched') ||
-      card.prices?.usd_foil != null
-
-    return supportsPremiumFinish ? [card, card, card] : [card]
-  })
-
-  return pick(weighted)
-}
-
 function cloneWithMeta(card, extra = {}) {
   if (!card) return null
 
@@ -359,28 +360,6 @@ function cloneWithMeta(card, extra = {}) {
     isFoil: Boolean(extra.isFoil),
     ...extra,
   }
-}
-
-function buildBags(pool) {
-  return {
-    mythics: [...(pool?.mythics ?? [])],
-    rares: [...(pool?.rares ?? [])],
-    uncommons: [...(pool?.uncommons ?? [])],
-    commons: [...(pool?.commons ?? [])],
-    lands: [...(pool?.lands ?? [])],
-    premium: [...(pool?.premium ?? [])],
-  }
-}
-
-function takeRandomFromBag(bag, keys, fallbackKeys = []) {
-  for (const key of [...keys, ...fallbackKeys]) {
-    if (!bag[key]?.length) continue
-
-    const index = Math.floor(Math.random() * bag[key].length)
-    return bag[key].splice(index, 1)[0]
-  }
-
-  return null
 }
 
 function pickRareOrMythic(pool, mythicChance, options = {}) {
@@ -423,19 +402,6 @@ function pickPlayWildcard(pool) {
   ])
 
   return bucket?.length ? pick(bucket) : null
-}
-
-function pickCollectorPremiumCard(premiumPool, fillerPool, bag) {
-  const premiumCard = takeRandomFromBag(bag, ['premium'])
-  if (premiumCard) return premiumCard
-
-  const weightedBucket = pickWeighted([
-    { value: getAllRareOrMythicCards(fillerPool), weight: 50 },
-    { value: fillerPool.uncommons, weight: 35 },
-    { value: fillerPool.commons, weight: 15 },
-  ])
-
-  return weightedBucket?.length ? pickFoilWeighted(weightedBucket, getAllNonLandCards(fillerPool)) : null
 }
 
 function buildPlayBooster(pool, rates) {
@@ -504,91 +470,52 @@ function buildPlayBooster(pool, rates) {
 }
 
 function buildCollectorBooster(pool, rates) {
-  // Real collector boosters are highly set-specific. This is a generic model that
-  // keeps the product identity believable: rare-heavy, almost fully foil, and rich
-  // in premium treatments, while gracefully falling back when Scryfall lacks enough
-  // booster-fun printings for the selected set.
-  const premiumPool = pool.special ?? pool
+  const specialPool = pool.special ?? pool
   const fillerPool = pool.filler ?? pool
-  const premiumBags = buildBags(premiumPool)
-  const fillerBags = buildBags(fillerPool)
   const pack = []
   const addCard = (card, extra = {}) => {
     const nextCard = cloneWithMeta(card, extra)
     if (nextCard) pack.push(nextCard)
   }
 
-  for (let i = 0; i < 5; i += 1) {
-    const premiumRare = takeRandomFromBag(
-      premiumBags,
-      Math.random() < rates.mythicChance ? ['mythics', 'rares'] : ['rares', 'mythics']
-    )
-    const fallbackRare = takeRandomFromBag(
-      fillerBags,
-      Math.random() < rates.mythicChance ? ['mythics', 'rares'] : ['rares', 'mythics']
-    )
-    const rareCard = premiumRare ?? fallbackRare
-
-    addCard(rareCard, {
-      rarity: rareCard?.rarity ?? 'rare',
-      isFoil: true,
-      isSpecialTreatment: Boolean(premiumRare),
-    })
+  if (pool.collectorFallback) {
+    // Fewer than 15 special cards available — draw from regular pool, force all foil.
+    const src = getAllNonLandCards(fillerPool)
+    const fallbackSrc = src.length > 0 ? src : (fillerPool.lands ?? [])
+    for (let i = 0; i < rates.totalCards; i += 1) {
+      if (!fallbackSrc.length) break
+      const card = pick(fallbackSrc)
+      addCard(card, { rarity: card.rarity ?? 'common', isFoil: true })
+    }
+    return pack.slice(0, rates.totalCards)
   }
 
+  // Build a flat source array from the special pool across all rarities.
+  const specialAll = [...getAllNonLandCards(specialPool), ...(specialPool.lands ?? [])]
+  const specialSrc = specialAll.length > 0 ? specialAll : getAllNonLandCards(fillerPool)
+
+  // Slots 1–10: foil cards of any rarity from special treatment pool.
+  for (let i = 0; i < 10; i += 1) {
+    const card = pick(specialSrc)
+    addCard(card, { rarity: card?.rarity ?? 'common', isFoil: true, isSpecialTreatment: true })
+  }
+
+  // Slots 11–13: non-foil special treatment cards.
   for (let i = 0; i < 3; i += 1) {
-    const premiumCard = pickCollectorPremiumCard(premiumPool, fillerPool, premiumBags)
-    addCard(premiumCard, {
-      rarity: premiumCard?.rarity ?? 'rare',
-      isFoil: true,
-      isSpecialTreatment: true,
-    })
+    const card = pick(specialSrc)
+    addCard(card, { rarity: card?.rarity ?? 'common', isFoil: false, isSpecialTreatment: true })
   }
 
-  for (let i = 0; i < 3; i += 1) {
-    const uncommonCard = takeRandomFromBag(fillerBags, ['uncommons'], ['commons', 'rares'])
-    addCard(uncommonCard, {
-      rarity: uncommonCard?.rarity ?? 'uncommon',
-      isFoil: true,
-    })
-  }
+  // Slot 14: rare or mythic special treatment foil.
+  const specialRM = getAllRareOrMythicCards(specialPool)
+  const slot14Src = specialRM.length > 0 ? specialRM : getAllRareOrMythicCards(fillerPool)
+  const slot14 = pick(slot14Src)
+  addCard(slot14, { rarity: slot14?.rarity ?? 'rare', isFoil: true, isSpecialTreatment: true })
 
-  const landCard = takeRandomFromBag(fillerBags, ['lands'], ['commons'])
-  if (landCard) {
-    addCard(landCard, {
-      rarity: landCard.type_line?.includes('Land') ? 'land' : landCard.rarity ?? 'common',
-      isFoil: true,
-    })
-  }
-
-  while (pack.length < rates.totalCards - 1) {
-    const fillerCard = takeRandomFromBag(fillerBags, ['commons', 'uncommons'], ['rares', 'mythics', 'lands'])
-    if (!fillerCard) break
-
-    addCard(fillerCard, {
-      rarity: fillerCard.type_line?.includes('Land') ? 'land' : fillerCard.rarity ?? 'common',
-      isFoil: true,
-    })
-  }
-
-  const displayCard = pickCollectorPremiumCard(premiumPool, fillerPool, premiumBags)
-  if (displayCard) {
-    addCard(displayCard, {
-      rarity: displayCard.rarity ?? 'rare',
-      isFoil: Math.random() < 0.8,
-      isSpecialTreatment: true,
-    })
-  }
-
-  while (pack.length < rates.totalCards) {
-    const fallbackCard = pickFoilWeighted(getAllNonLandCards(fillerPool), fillerPool.lands)
-    if (!fallbackCard) break
-
-    addCard(fallbackCard, {
-      rarity: fallbackCard.type_line?.includes('Land') ? 'land' : fallbackCard.rarity ?? 'common',
-      isFoil: true,
-    })
-  }
+  // Slot 15: traditional foil rare or mythic from regular pool.
+  const regularRM = getAllRareOrMythicCards(fillerPool)
+  const slot15 = pick(regularRM.length > 0 ? regularRM : getAllNonLandCards(fillerPool))
+  addCard(slot15, { rarity: slot15?.rarity ?? 'rare', isFoil: true, isSpecialTreatment: false })
 
   return pack.slice(0, rates.totalCards)
 }

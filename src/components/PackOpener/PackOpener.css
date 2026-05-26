@@ -572,7 +572,7 @@
     foilHueRotate 4s linear infinite;
   mix-blend-mode: screen;
   pointer-events: none;
-  opacity: 0.35;
+  opacity: 0.3;
   z-index: 1;
 }
 
